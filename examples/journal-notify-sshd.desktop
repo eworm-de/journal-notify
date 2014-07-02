@@ -2,7 +2,7 @@
 Name=journal-notify-sshd
 GenericName=Journal-Notify SSHD
 Comment=Notify about SSH activities
-Exec=journal-notify -m SYSLOG_IDENTIFIER=sshd -e -r "^(error:.*|Accepted.*)" -i security-high
+Exec=journal-notify -m SYSLOG_IDENTIFIER=sshd -e -r "^(error:|Accepted)" -i security-high
 StartupNotify=false
 Terminal=false
 Type=Application

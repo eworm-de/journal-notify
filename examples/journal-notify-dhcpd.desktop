@@ -2,7 +2,7 @@
 Name=journal-notify-dhcpd
 GenericName=Journal-Notify DHCPD
 Comment=Notify about DHCP activities
-Exec=journal-notify -m SYSLOG_IDENTIFIER=dhcpd -r "^DHCPN?ACK" -i network-wired
+Exec=journal-notify -m SYSLOG_IDENTIFIER=dhcpd -e -r "^DHCPN?ACK" -i network-wired
 StartupNotify=false
 Terminal=false
 Type=Application

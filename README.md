@@ -60,7 +60,7 @@ Be warned: This can flood your disktop with notifications.
 
 The screenshot shown above resulted from this command:
 
-> journal-notify -m SYSLOG_IDENTIFIER=sshd -e -r "^(error:.\*|Accepted.\*)"
+> journal-notify -m SYSLOG_IDENTIFIER=sshd -e -r "^(error:|Accepted)"
 -i security-high
 
 Additionally example desktop files are installed to
