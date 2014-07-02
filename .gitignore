@@ -1,0 +1,8 @@
+*~
+*.o
+config.h
+journal-notify
+README.html
+version.h
+journal-notify-*.tar.xz
+journal-notify-*.tar.xz.asc
