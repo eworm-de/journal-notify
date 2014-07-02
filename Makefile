@@ -36,5 +36,5 @@ clean:
 	rm -f *.o *~ README.html journal-notify
 
 release:
-	git archive --format=tar.xz --prefix=journal-notify$(VERSION)/ $(VERSION) > journal-notify-$(VERSION).tar.xz
+	git archive --format=tar.xz --prefix=journal-notify-$(VERSION)/ $(VERSION) > journal-notify-$(VERSION).tar.xz
 	gpg -ab journal-notify-$(VERSION).tar.xz
