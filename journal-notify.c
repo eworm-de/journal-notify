@@ -37,7 +37,7 @@ int main(int argc, char **argv) {
 	size_t length;
 
 	char * summary, * message;
-	const char *summarystr, * messagestr, * icon = DEFAULTICON;
+	const char * icon = DEFAULTICON;
 
 	program = argv[0];
 
@@ -132,24 +132,22 @@ int main(int argc, char **argv) {
 			continue;
 		}
 
-		message = strndup(data, length);
-		messagestr = message + 8;
+		message = g_markup_escape_text(data + 8, length - 8);
 
 		/* get SYSLOG_IDENTIFIER field */
 		if ((rc = sd_journal_get_data(journal, "SYSLOG_IDENTIFIER", &data, &length)) < 0) {
 			fprintf(stderr, "Failed to read syslog identifier field: %s\n", strerror(-rc));
 			continue;
 		}
-		summary = strndup(data, length);
-		summarystr = summary + 18;
+		summary = g_markup_escape_text(data + 18, length - 18);
 
 		/* show notification */
 		if (have_regex > 0) {
-			if (regexec(&regex, messagestr, 0, NULL, 0) == 0) {
-				notify(summarystr, messagestr, icon);
+			if (regexec(&regex, message, 0, NULL, 0) == 0) {
+				notify(summary, message, icon);
 			}
 		} else {
-			notify(summarystr, messagestr, icon);
+			notify(summary, message, icon);
 		}
 
 		free(summary);
