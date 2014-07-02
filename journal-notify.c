@@ -19,10 +19,29 @@ const char * program = NULL;
 #define OPTSTRING	"ehi:m:nr:"
 #define DEFAULTICON	"dialog-information"
 
-void notify(const char * summary, const char * body, const char * icon) {
-	NotifyNotification * notification = notify_notification_new(summary, body, icon);
-	notify_notification_show(notification, NULL);
+int notify(const char * summary, const char * body, const char * icon) {
+	NotifyNotification * notification;
+	int rc = -1;
+
+	notification =
+#if NOTIFY_CHECK_VERSION(0, 7, 0)
+		notify_notification_new(summary, body, icon);
+#else
+		notify_notification_new(summary, body, icon, NULL);
+#endif
+
+	if (notification == NULL)
+		return rc;
+
+	if (notify_notification_show(notification, NULL) == FALSE)
+		goto out;
+
+	rc = 0;
+
+out:
 	g_object_unref(G_OBJECT(notification));
+
+	return rc;
 }
 
 int main(int argc, char **argv) {
@@ -144,10 +163,16 @@ int main(int argc, char **argv) {
 		/* show notification */
 		if (have_regex > 0) {
 			if (regexec(&regex, message, 0, NULL, 0) == 0) {
-				notify(summary, message, icon);
+				if ((rc = notify(summary, message, icon)) < 0) {
+					fprintf(stderr, "Failed to show notification.\n");
+					goto out40;
+				}
 			}
 		} else {
-			notify(summary, message, icon);
+			if ((rc = notify(summary, message, icon)) < 0) {
+				fprintf(stderr, "Failed to show notification.\n");
+				goto out40;
+			}
 		}
 
 		free(summary);
