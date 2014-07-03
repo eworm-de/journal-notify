@@ -150,7 +150,6 @@ int main(int argc, char **argv) {
 			fprintf(stderr, "Failed to read message field: %s\n", strerror(-rc));
 			continue;
 		}
-
 		message = g_markup_escape_text(data + 8, length - 8);
 
 		/* get SYSLOG_IDENTIFIER field */
@@ -161,14 +160,7 @@ int main(int argc, char **argv) {
 		summary = g_markup_escape_text(data + 18, length - 18);
 
 		/* show notification */
-		if (have_regex > 0) {
-			if (regexec(&regex, message, 0, NULL, 0) == 0) {
-				if ((rc = notify(summary, message, icon)) < 0) {
-					fprintf(stderr, "Failed to show notification.\n");
-					goto out40;
-				}
-			}
-		} else {
+		if (have_regex == 0 || regexec(&regex, message, 0, NULL, 0) == 0) {
 			if ((rc = notify(summary, message, icon)) < 0) {
 				fprintf(stderr, "Failed to show notification.\n");
 				goto out40;
