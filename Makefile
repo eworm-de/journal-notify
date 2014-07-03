@@ -14,7 +14,12 @@ VERSION := 0.0.2
 
 all: journal-notify README.html
 
-journal-notify: journal-notify.c
+version.h: $(wildcard .git/HEAD .git/index .git/refs/tags/*) Makefile
+	echo "#ifndef VERSION" > $@
+	echo "#define VERSION \"$(shell git describe --tags --long 2>/dev/null || echo ${VERSION})\"" >> $@
+	echo "#endif" >> $@
+
+journal-notify: journal-notify.c version.h
 	$(CC) $(CFLAGS) -o journal-notify journal-notify.c
 
 README.html: README.md

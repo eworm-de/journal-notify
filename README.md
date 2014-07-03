@@ -57,6 +57,7 @@ Be warned: This can flood your disktop with notifications.
  to systemd journal fields. (see `man 7 systemd.journal-fields`)
 * *-n*: no case sensitive regular expressions
 * *-r REGEX*: This add a regular expression match for the message field.
+* *-v* verbose output, can be specified multiple times
 
 The screenshot shown above resulted from this command:
 

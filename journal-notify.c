@@ -14,9 +14,11 @@
 
 #include <libnotify/notify.h>
 
+#include "version.h"
+
 const char * program = NULL;
 
-#define OPTSTRING	"ehi:m:nr:"
+#define OPTSTRING	"ehi:m:nr:v"
 #define DEFAULTICON	"dialog-information"
 
 int notify(const char * summary, const char * body, const char * icon) {
@@ -46,6 +48,7 @@ out:
 
 int main(int argc, char **argv) {
 	int i, rc = EXIT_FAILURE;
+	uint8_t verbose = 0;
 
 	uint8_t have_regex = 0;
 	regex_t regex;
@@ -68,13 +71,20 @@ int main(int argc, char **argv) {
 				regex_flags |= REG_EXTENDED;
 				break;
 			case 'h':
-				fprintf(stderr, "usage: %s [-e] [-h] [-m MATCH] [-n] [-r REGEX]\n", program);
+				fprintf(stderr, "usage: %s [-e] [-h] [-i ICON] [-m MATCH] [-n] [-r REGEX] [-vv]\n", program);
 				return EXIT_SUCCESS;
 			case 'n':
 				regex_flags |= REG_ICASE;
 				break;
+			case 'v':
+				verbose++;
+				break;
 		}
 	}
+
+	/* say hello */
+	if (verbose > 0)
+		printf("%s v%s (compiled: " __DATE__ ", " __TIME__ ")\n", program, VERSION);
 
 	/* reinitialize getopt() by resetting optind to 0 */
 	optind = 0;
@@ -92,6 +102,9 @@ int main(int argc, char **argv) {
 				icon = optarg;
 				break;
 			case 'm':
+				if (verbose > 1)
+					printf("Adding match '%s'...\n", optarg);
+
 				if ((rc = sd_journal_add_match(journal, optarg, 0)) < 0) {
 					fprintf(stderr, "Failed to add match '%s': %s\n", optarg, strerror(-rc));
 					goto out20;
@@ -99,6 +112,9 @@ int main(int argc, char **argv) {
 
 				break;
 			case 'r':
+				if (verbose > 1)
+					printf("Adding regular expression '%s'...\n", optarg);
+
 				if (have_regex > 0) {
 					fprintf(stderr, "Only one regex allowed!\n");
 					rc = EXIT_FAILURE;
@@ -162,6 +178,9 @@ int main(int argc, char **argv) {
 		/* show notification */
 		if (have_regex == 0 || regexec(&regex, message, 0, NULL, 0) == 0) {
 			for (i = 0; i < 3; i++) {
+				if (verbose > 0)
+					printf("Showing notification: %s: %s\n", summary, message);
+
 				if ((rc = notify(summary, message, icon)) == 0)
 					break;
 
