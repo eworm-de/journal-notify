@@ -161,10 +161,20 @@ int main(int argc, char **argv) {
 
 		/* show notification */
 		if (have_regex == 0 || regexec(&regex, message, 0, NULL, 0) == 0) {
-			if ((rc = notify(summary, message, icon)) < 0) {
-				fprintf(stderr, "Failed to show notification.\n");
-				goto out40;
+			for (i = 0; i < 3; i++) {
+				if ((rc = notify(summary, message, icon)) == 0)
+					break;
+
+				fprintf(stderr, "Failed to show notification, reinitializing libnotify.\n");
+				notify_uninit();
+				usleep(500 * 1000);
+				if (notify_init(program) == FALSE) {
+					fprintf(stderr, "Failed to initialize notify.\n");
+					rc = EXIT_FAILURE;
+				}
 			}
+			if (rc != 0)
+				goto out40;
 		}
 
 		free(summary);
