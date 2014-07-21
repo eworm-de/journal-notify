@@ -50,12 +50,14 @@ Be warned: This can flood your disktop with notifications.
 
 `journal-notify` accepts some options:
 
+* *-a*: combine matches with a logical AND
 * *-e*: use extended regular expressions
 * *-h*: show help
 * *-i ICON*: icon to use
 * *-m MATCH*: This can be specified more than once. The option accepts matches
  to systemd journal fields. (see `man 7 systemd.journal-fields`)
 * *-n*: no case sensitive regular expressions
+* *-o*: combine matches with a logical OR
 * *-r REGEX*: This add a regular expression match for the message field.
 * *-v* verbose output, can be specified multiple times
 

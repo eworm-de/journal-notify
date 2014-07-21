@@ -18,7 +18,7 @@
 
 const char * program = NULL;
 
-#define OPTSTRING	"ehi:m:nr:v"
+#define OPTSTRING	"aehi:m:nor:v"
 #define DEFAULTICON	"dialog-information"
 
 int notify(const char * summary, const char * body, const char * icon) {
@@ -71,7 +71,7 @@ int main(int argc, char **argv) {
 				regex_flags |= REG_EXTENDED;
 				break;
 			case 'h':
-				fprintf(stderr, "usage: %s [-e] [-h] [-i ICON] [-m MATCH] [-n] [-r REGEX] [-vv]\n", program);
+				fprintf(stderr, "usage: %s [-e] [-h] [-i ICON] [-m MATCH] [-o -m MATCH] [-a -m MATCH] [-n] [-r REGEX] [-vv]\n", program);
 				return EXIT_SUCCESS;
 			case 'n':
 				regex_flags |= REG_ICASE;
@@ -98,6 +98,16 @@ int main(int argc, char **argv) {
 	/* get command line options - part II*/
 	while ((i = getopt(argc, argv, OPTSTRING)) != -1) {
 		switch (i) {
+			case 'a':
+				if (verbose > 1)
+					printf("Adding logical AND to match...\n");
+
+				if ((rc = sd_journal_add_conjunction(journal)) < 0) {
+					fprintf(stderr, "Failed to add logical AND to match.\n");
+					goto out20;
+				}
+
+				break;
 			case 'i':
 				icon = optarg;
 				break;
@@ -107,6 +117,16 @@ int main(int argc, char **argv) {
 
 				if ((rc = sd_journal_add_match(journal, optarg, 0)) < 0) {
 					fprintf(stderr, "Failed to add match '%s': %s\n", optarg, strerror(-rc));
+					goto out20;
+				}
+
+				break;
+			case 'o':
+				if (verbose > 1)
+					printf("Adding logical OR to match...\n");
+
+				if ((rc = sd_journal_add_disjunction(journal)) < 0) {
+					fprintf(stderr, "Failed to add logical OR to match.\n");
 					goto out20;
 				}
 
