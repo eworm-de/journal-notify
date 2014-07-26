@@ -1,0 +1,34 @@
+/*
+ * (C) 2014 by Christian Hesse <mail@eworm.de>
+ *
+ * This software may be used and distributed according to the terms
+ * of the GNU General Public License, incorporated herein by reference.
+ */
+
+#ifndef _JOURNAL_NOTIFY_H
+#define _JOURNAL_NOTIFY_H
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <regex.h>
+
+#include <systemd/sd-journal.h>
+
+#include <libnotify/notify.h>
+
+#include "version.h"
+
+#define OPTSTRING	"aehi:m:nor:v"
+#define DEFAULTICON	"dialog-information"
+
+/*** notify ***/
+int notify(const char * summary, const char * body, const char * icon);
+
+/*** main ***/
+int main(int argc, char **argv);
+
+#endif /* _JOURNAL_NOTIFY_H */
+
+// vim: set syntax=c:
+

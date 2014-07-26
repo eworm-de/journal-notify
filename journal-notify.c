@@ -5,22 +5,11 @@
  * of the GNU General Public License, incorporated herein by reference.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <regex.h>
-
-#include <systemd/sd-journal.h>
-
-#include <libnotify/notify.h>
-
-#include "version.h"
+#include "journal-notify.h"
 
 const char * program = NULL;
 
-#define OPTSTRING	"aehi:m:nor:v"
-#define DEFAULTICON	"dialog-information"
-
+/*** notify ***/
 int notify(const char * summary, const char * body, const char * icon) {
 	NotifyNotification * notification;
 	int rc = -1;
@@ -46,6 +35,7 @@ out:
 	return rc;
 }
 
+/*** main ***/
 int main(int argc, char **argv) {
 	int i, rc = EXIT_FAILURE;
 	uint8_t verbose = 0;
