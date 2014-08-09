@@ -9,6 +9,21 @@
 
 const char * program = NULL;
 
+const static char optstring[] = "aehi:m:nor:v";
+const static struct option options_long[] = {
+	/* name			has_arg			flag	val */
+	{ "and",		no_argument,		NULL,	'a' },
+	{ "extended-regex",	no_argument,		NULL,	'e' },
+	{ "help",		no_argument,		NULL,	'h' },
+	{ "icon",		required_argument,	NULL,	'i' },
+	{ "match",		required_argument,	NULL,	'm' },
+	{ "no-case",		no_argument,		NULL,	'n' },
+	{ "or",			no_argument,		NULL,	'o' },
+	{ "regex",		required_argument,	NULL,	'r' },
+	{ "verbose",		no_argument,		NULL,	'v' },
+	{ 0, 0, 0, 0 }
+};
+
 /*** notify ***/
 int notify(const char * summary, const char * body, const char * icon) {
 	NotifyNotification * notification;
@@ -55,7 +70,7 @@ int main(int argc, char **argv) {
 
 	/* get command line options - part I
 	 * just get -h (help), -e and -n (regex options) here */
-	while ((i = getopt(argc, argv, OPTSTRING)) != -1) {
+	while ((i = getopt_long(argc, argv, optstring, options_long, NULL)) != -1) {
 		switch (i) {
 			case 'e':
 				regex_flags |= REG_EXTENDED;
@@ -86,7 +101,7 @@ int main(int argc, char **argv) {
 	}
 
 	/* get command line options - part II*/
-	while ((i = getopt(argc, argv, OPTSTRING)) != -1) {
+	while ((i = getopt_long(argc, argv, optstring, options_long, NULL)) != -1) {
 		switch (i) {
 			case 'a':
 				if (verbose > 1)

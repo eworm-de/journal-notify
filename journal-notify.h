@@ -8,10 +8,12 @@
 #ifndef _JOURNAL_NOTIFY_H
 #define _JOURNAL_NOTIFY_H
 
+#include <getopt.h>
+#include <regex.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <regex.h>
+#include <unistd.h>
 
 #include <systemd/sd-journal.h>
 
@@ -19,7 +21,6 @@
 
 #include "version.h"
 
-#define OPTSTRING	"aehi:m:nor:v"
 #define DEFAULTICON	"dialog-information"
 
 /*** notify ***/
