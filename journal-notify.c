@@ -179,6 +179,8 @@ int main(int argc, char **argv) {
 			fprintf(stderr, "Failed to iterate to next entry: %s\n", strerror(-rc));
 			goto out40;
 		} else if (rc == 0) {
+			if (verbose > 2)
+				printf("Waiting...\n");
 			if ((rc = sd_journal_wait(journal, (uint64_t) -1)) < 0) {
 				fprintf(stderr, "Failed to wait for changes: %s\n", strerror(-rc));
 				goto out40;
@@ -199,6 +201,9 @@ int main(int argc, char **argv) {
 			continue;
 		}
 		summary = g_markup_escape_text(data + 18, length - 18);
+
+		if (verbose > 2)
+			printf("Received message from journal: %s\n", message);
 
 		/* show notification */
 		if (have_regex == 0 || regexec(&regex, message, 0, NULL, 0) == 0) {
