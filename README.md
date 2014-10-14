@@ -71,3 +71,7 @@ Additionally example desktop files are installed to
 `~/.config/autostart/` to enable autostart or create your own desktop files
 there.
 
+### Upstream
+
+URL: [GitHub.com](https://github.com/eworm-de/journal-notify)  
+Mirror: [eworm.de](http://git.eworm.de/cgit.cgi/journal-notify/)
