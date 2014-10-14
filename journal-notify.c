@@ -91,9 +91,6 @@ int main(int argc, char **argv) {
 	if (verbose > 0)
 		printf("%s v%s (compiled: " __DATE__ ", " __TIME__ ")\n", program, VERSION);
 
-	/* reinitialize getopt() by resetting optind to 0 */
-	optind = 0;
-
 	/* open journal */
 	if ((rc = sd_journal_open(&journal, SD_JOURNAL_LOCAL_ONLY + SD_JOURNAL_SYSTEM)) < 0) {
 		fprintf(stderr, "Failed to open journal: %s\n", strerror(-rc));
@@ -111,6 +108,9 @@ int main(int argc, char **argv) {
 		fprintf(stderr, "Failed to iterate to previous entry: %s\n", strerror(-rc));
 		goto out30;
 	}
+
+	/* reinitialize getopt() by resetting optind to 0 */
+	optind = 0;
 
 	/* get command line options - part II*/
 	while ((i = getopt_long(argc, argv, optstring, options_long, NULL)) != -1) {
