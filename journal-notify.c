@@ -100,6 +100,18 @@ int main(int argc, char **argv) {
 		goto out10;
 	}
 
+	/* seek to the end of the journal */
+	if ((rc = sd_journal_seek_tail(journal)) < 0) {
+		fprintf(stderr, "Failed to seek to the tail: %s\n", strerror(-rc));
+		goto out30;
+	}
+
+	/* we are behind the last entry, so use previous one */
+	if ((rc = sd_journal_previous(journal)) < 0) {
+		fprintf(stderr, "Failed to iterate to previous entry: %s\n", strerror(-rc));
+		goto out30;
+	}
+
 	/* get command line options - part II*/
 	while ((i = getopt_long(argc, argv, optstring, options_long, NULL)) != -1) {
 		switch (i) {
@@ -154,18 +166,6 @@ int main(int argc, char **argv) {
 
 				break;
 		}
-	}
-
-	/* seek to the end of the journal */
-	if ((rc = sd_journal_seek_tail(journal)) < 0) {
-		fprintf(stderr, "Failed to seek to the tail: %s\n", strerror(-rc));
-		goto out30;
-	}
-
-	/* we are behind the last entry, so use previous one */
-	if ((rc = sd_journal_previous(journal)) < 0) {
-		fprintf(stderr, "Failed to iterate to previous entry: %s\n", strerror(-rc));
-		goto out30;
 	}
 
 	if (notify_init(program) == FALSE) {
