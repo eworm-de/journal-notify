@@ -100,13 +100,13 @@ int main(int argc, char **argv) {
 	/* seek to the end of the journal */
 	if ((rc = sd_journal_seek_tail(journal)) < 0) {
 		fprintf(stderr, "Failed to seek to the tail: %s\n", strerror(-rc));
-		goto out30;
+		goto out20;
 	}
 
 	/* we are behind the last entry, so use previous one */
 	if ((rc = sd_journal_previous(journal)) < 0) {
 		fprintf(stderr, "Failed to iterate to previous entry: %s\n", strerror(-rc));
-		goto out30;
+		goto out20;
 	}
 
 	/* reinitialize getopt() by resetting optind to 0 */
@@ -121,7 +121,7 @@ int main(int argc, char **argv) {
 
 				if ((rc = sd_journal_add_conjunction(journal)) < 0) {
 					fprintf(stderr, "Failed to add logical AND to match.\n");
-					goto out20;
+					goto out30;
 				}
 
 				break;
@@ -134,7 +134,7 @@ int main(int argc, char **argv) {
 
 				if ((rc = sd_journal_add_match(journal, optarg, 0)) < 0) {
 					fprintf(stderr, "Failed to add match '%s': %s\n", optarg, strerror(-rc));
-					goto out20;
+					goto out30;
 				}
 
 				break;
@@ -144,7 +144,7 @@ int main(int argc, char **argv) {
 
 				if ((rc = sd_journal_add_disjunction(journal)) < 0) {
 					fprintf(stderr, "Failed to add logical OR to match.\n");
-					goto out20;
+					goto out30;
 				}
 
 				break;
@@ -155,7 +155,7 @@ int main(int argc, char **argv) {
 				if (have_regex > 0) {
 					fprintf(stderr, "Only one regex allowed!\n");
 					rc = EXIT_FAILURE;
-					goto out20;
+					goto out30;
 				}
 
 				if ((rc = regcomp(&regex, optarg, regex_flags)) != 0) {
