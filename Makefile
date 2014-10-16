@@ -29,6 +29,7 @@ install: install-bin install-doc
 
 install-bin: journal-notify
 	$(INSTALL) -D -m0755 journal-notify $(DESTDIR)/usr/bin/journal-notify
+	$(INSTALL) -D -m0755 examples/journal-notify-crit-alert-emerg.desktop $(DESTDIR)/usr/share/journal-notify/examples/journal-notify-crit-alert-emerg.desktop
 	$(INSTALL) -D -m0755 examples/journal-notify-dhcpd.desktop $(DESTDIR)/usr/share/journal-notify/examples/journal-notify-dhcpd.desktop
 	$(INSTALL) -D -m0755 examples/journal-notify-sshd.desktop $(DESTDIR)/usr/share/journal-notify/examples/journal-notify-sshd.desktop
 
