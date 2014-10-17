@@ -1,6 +1,6 @@
 # journal-notify - Notify about journal log entries
 
-CC	:= gcc
+CC	:= gcc -std=c11
 MD	:= markdown
 INSTALL	:= install
 CP	:= cp
