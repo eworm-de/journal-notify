@@ -26,7 +26,8 @@ const static struct option options_long[] = {
 };
 
 /*** notify ***/
-int notify(const char * summary, const char * body, const char * icon, int timeout) {
+int notify(const char * summary, const char * body, const char * icon,
+		int timeout, uint8_t urgency) {
 	NotifyNotification * notification;
 	int rc = -1;
 
@@ -43,6 +44,8 @@ int notify(const char * summary, const char * body, const char * icon, int timeo
 	/* NOTIFY_EXPIRES_NEVER == 0 */
 	if (timeout >= 0)
 		notify_notification_set_timeout(notification, timeout * 1000);
+
+	notify_notification_set_urgency(notification, urgency);
 
 	if (notify_notification_show(notification, NULL) == FALSE)
 		goto out;
@@ -71,6 +74,7 @@ int main(int argc, char **argv) {
 	char * summary, * message;
 	const char * icon = DEFAULTICON;
 	int timeout = -1;
+	uint8_t urgency;
 
 	program = argv[0];
 
@@ -214,6 +218,26 @@ int main(int argc, char **argv) {
 		}
 		summary = g_markup_escape_text(data + 18, length - 18);
 
+		/* get PRIORITY field */
+		if ((rc = sd_journal_get_data(journal, "PRIORITY", &data, &length)) < 0) {
+			fprintf(stderr, "Failed to read syslog identifier field: %s\n", strerror(-rc));
+			continue;
+		}
+		switch(atoi(data + 9)) {
+			case 0:
+			case 1:
+			case 2:
+				urgency = NOTIFY_URGENCY_CRITICAL;
+				break;
+			case 3:
+			case 4:
+				urgency = NOTIFY_URGENCY_NORMAL;
+				break;
+			default: /* this catches priority 5, 6 and 7 */
+				urgency = NOTIFY_URGENCY_LOW;
+				break;
+		}
+
 		if (verbose > 2)
 			printf("Received message from journal: %s\n", message);
 
@@ -223,7 +247,7 @@ int main(int argc, char **argv) {
 				if (verbose > 0)
 					printf("Showing notification: %s: %s\n", summary, message);
 
-				if ((rc = notify(summary, message, icon, timeout)) == 0)
+				if ((rc = notify(summary, message, icon, timeout, urgency)) == 0)
 					break;
 
 				fprintf(stderr, "Failed to show notification, reinitializing libnotify.\n");
