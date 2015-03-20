@@ -9,7 +9,7 @@
 
 const char * program = NULL;
 
-const static char optstring[] = "aehi:m:nor:v";
+const static char optstring[] = "aehi:m:nor:t:v";
 const static struct option options_long[] = {
 	/* name			has_arg			flag	val */
 	{ "and",		no_argument,		NULL,	'a' },
@@ -20,12 +20,13 @@ const static struct option options_long[] = {
 	{ "no-case",		no_argument,		NULL,	'n' },
 	{ "or",			no_argument,		NULL,	'o' },
 	{ "regex",		required_argument,	NULL,	'r' },
+	{ "timeout",		required_argument,	NULL,	't' },
 	{ "verbose",		no_argument,		NULL,	'v' },
 	{ 0, 0, 0, 0 }
 };
 
 /*** notify ***/
-int notify(const char * summary, const char * body, const char * icon) {
+int notify(const char * summary, const char * body, const char * icon, int timeout) {
 	NotifyNotification * notification;
 	int rc = -1;
 
@@ -38,6 +39,10 @@ int notify(const char * summary, const char * body, const char * icon) {
 
 	if (notification == NULL)
 		return rc;
+
+	/* NOTIFY_EXPIRES_NEVER == 0 */
+	if (timeout >= 0)
+		notify_notification_set_timeout(notification, timeout * 1000);
 
 	if (notify_notification_show(notification, NULL) == FALSE)
 		goto out;
@@ -65,6 +70,7 @@ int main(int argc, char **argv) {
 
 	char * summary, * message;
 	const char * icon = DEFAULTICON;
+	int timeout = -1;
 
 	program = argv[0];
 
@@ -76,7 +82,7 @@ int main(int argc, char **argv) {
 				regex_flags |= REG_EXTENDED;
 				break;
 			case 'h':
-				fprintf(stderr, "usage: %s [-e] [-h] [-i ICON] [-m MATCH] [-o -m MATCH] [-a -m MATCH] [-n] [-r REGEX] [-vv]\n", program);
+				fprintf(stderr, "usage: %s [-e] [-h] [-i ICON] [-m MATCH] [-o -m MATCH] [-a -m MATCH] [-n] [-r REGEX] [-t SECONDS] [-vv]\n", program);
 				return EXIT_SUCCESS;
 			case 'n':
 				regex_flags |= REG_ICASE;
@@ -165,6 +171,12 @@ int main(int argc, char **argv) {
 				have_regex++;
 
 				break;
+			case 't':
+				timeout = atoi(optarg);
+				if (verbose > 1)
+					printf("Notifications will be displayed for %d seconds.\n", timeout);
+
+				break;
 		}
 	}
 
@@ -211,7 +223,7 @@ int main(int argc, char **argv) {
 				if (verbose > 0)
 					printf("Showing notification: %s: %s\n", summary, message);
 
-				if ((rc = notify(summary, message, icon)) == 0)
+				if ((rc = notify(summary, message, icon, timeout)) == 0)
 					break;
 
 				fprintf(stderr, "Failed to show notification, reinitializing libnotify.\n");
