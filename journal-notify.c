@@ -26,10 +26,32 @@ const static struct option options_long[] = {
 };
 
 /*** notify ***/
-int notify(const char * identifier, const char * message, const char * icon,
-		int timeout, uint8_t urgency) {
+int notify(const char * identifier, const char * message, uint8_t priority,
+		const char * icon, int timeout) {
 	NotifyNotification * notification;
+	char * identifier_markup = NULL, * message_markup = NULL;
+	uint8_t urgency;
 	int rc = -1;
+
+	if ((message_markup = g_markup_escape_text(message, -1)) == NULL)
+		goto out10;
+	if ((identifier_markup = g_markup_escape_text(identifier, -1)) == NULL)
+		goto out10;
+
+	switch(priority) {
+		case 0:
+		case 1:
+		case 2:
+			urgency = NOTIFY_URGENCY_CRITICAL;
+			break;
+		case 3:
+		case 4:
+			urgency = NOTIFY_URGENCY_NORMAL;
+			break;
+		default: /* this catches priority 5, 6 and 7 */
+			urgency = NOTIFY_URGENCY_LOW;
+			break;
+	}
 
 	notification =
 #if NOTIFY_CHECK_VERSION(0, 7, 0)
@@ -39,7 +61,7 @@ int notify(const char * identifier, const char * message, const char * icon,
 #endif
 
 	if (notification == NULL)
-		return rc;
+		goto out10;
 
 	/* NOTIFY_EXPIRES_NEVER == 0 */
 	if (timeout >= 0)
@@ -48,12 +70,18 @@ int notify(const char * identifier, const char * message, const char * icon,
 	notify_notification_set_urgency(notification, urgency);
 
 	if (notify_notification_show(notification, NULL) == FALSE)
-		goto out;
+		goto out20;
 
 	rc = 0;
 
-out:
+out20:
 	g_object_unref(G_OBJECT(notification));
+
+out10:
+	if (message_markup)
+		free(message_markup);
+	if (identifier_markup)
+		free(identifier_markup);
 
 	return rc;
 }
@@ -72,9 +100,8 @@ int main(int argc, char **argv) {
 	const void * data;
 	size_t length;
 
-	char * identifier, * message,
-		* identifier_markup, * message_markup;
-	uint8_t priority, urgency;
+	char * identifier, * message;
+	uint8_t priority;
 	const char * icon = DEFAULTICON;
 	int timeout = -1;
 
@@ -223,7 +250,6 @@ int main(int argc, char **argv) {
 		message = malloc(length - 8 + 1);
 		memcpy(message, data + 8, length - 8);
 		message[length - 8] = 0;
-		message_markup = g_markup_escape_text(message, -1);
 
 		/* get SYSLOG_IDENTIFIER field */
 		if ((rc = sd_journal_get_data(journal, "SYSLOG_IDENTIFIER", &data, &length)) < 0) {
@@ -233,7 +259,6 @@ int main(int argc, char **argv) {
 		identifier = malloc(length - 18 + 1);
 		memcpy(identifier, data + 18, length - 18);
 		identifier[length - 18] = 0;
-		identifier_markup = g_markup_escape_text(identifier, -1);
 
 		/* get PRIORITY field */
 		if ((rc = sd_journal_get_data(journal, "PRIORITY", &data, &length)) < 0) {
@@ -241,20 +266,6 @@ int main(int argc, char **argv) {
 			continue;
 		}
 		priority = atoi(data + 9);
-		switch(priority) {
-			case 0:
-			case 1:
-			case 2:
-				urgency = NOTIFY_URGENCY_CRITICAL;
-				break;
-			case 3:
-			case 4:
-				urgency = NOTIFY_URGENCY_NORMAL;
-				break;
-			default: /* this catches priority 5, 6 and 7 */
-				urgency = NOTIFY_URGENCY_LOW;
-				break;
-		}
 
 		if (verbose > 2)
 			printf("Received message from journal: %s\n", message);
@@ -265,7 +276,7 @@ int main(int argc, char **argv) {
 				if (verbose > 0)
 					printf("Showing notification: %s: %s\n", identifier, message);
 
-				if ((rc = notify(identifier_markup, message_markup, icon, timeout, urgency)) == 0)
+				if ((rc = notify(identifier, message, priority, icon, timeout)) == 0)
 					break;
 
 				fprintf(stderr, "Failed to show notification, reinitializing libnotify.\n");
@@ -281,9 +292,7 @@ int main(int argc, char **argv) {
 		}
 
 		free(identifier);
-		free(identifier_markup);
 		free(message);
-		free(message_markup);
 	}
 
 	rc = EXIT_SUCCESS;
