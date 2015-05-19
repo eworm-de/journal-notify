@@ -72,7 +72,8 @@ int main(int argc, char **argv) {
 	const void * data;
 	size_t length;
 
-	char * identifier, * message;
+	char * identifier, * message,
+		* identifier_markup, * message_markup;
 	const char * icon = DEFAULTICON;
 	int timeout = -1;
 	uint8_t urgency;
@@ -219,14 +220,20 @@ int main(int argc, char **argv) {
 			fprintf(stderr, "Failed to read message field: %s\n", strerror(-rc));
 			continue;
 		}
-		message = g_markup_escape_text(data + 8, length - 8);
+		message = malloc(length - 8 + 1);
+		memcpy(message, data + 8, length - 8);
+		message[length - 8] = 0;
+		message_markup = g_markup_escape_text(message, -1);
 
 		/* get SYSLOG_IDENTIFIER field */
 		if ((rc = sd_journal_get_data(journal, "SYSLOG_IDENTIFIER", &data, &length)) < 0) {
 			fprintf(stderr, "Failed to read syslog identifier field: %s\n", strerror(-rc));
 			continue;
 		}
-		identifier = g_markup_escape_text(data + 18, length - 18);
+		identifier = malloc(length - 18 + 1);
+		memcpy(identifier, data + 18, length - 18);
+		identifier[length - 18] = 0;
+		identifier_markup = g_markup_escape_text(identifier, -1);
 
 		/* get PRIORITY field */
 		if ((rc = sd_journal_get_data(journal, "PRIORITY", &data, &length)) < 0) {
@@ -257,7 +264,7 @@ int main(int argc, char **argv) {
 				if (verbose > 0)
 					printf("Showing notification: %s: %s\n", identifier, message);
 
-				if ((rc = notify(identifier, message, icon, timeout, urgency)) == 0)
+				if ((rc = notify(identifier_markup, message_markup, icon, timeout, urgency)) == 0)
 					break;
 
 				fprintf(stderr, "Failed to show notification, reinitializing libnotify.\n");
@@ -273,7 +280,9 @@ int main(int argc, char **argv) {
 		}
 
 		free(identifier);
+		free(identifier_markup);
 		free(message);
+		free(message_markup);
 	}
 
 	rc = EXIT_SUCCESS;
