@@ -16,6 +16,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/wait.h>
 
 #include <systemd/sd-journal.h>
 
@@ -24,6 +25,16 @@
 #include "version.h"
 
 #define DEFAULTICON	"dialog-information"
+
+const char * priorities[] = {
+	"EMERG", /* 0 */
+	"ALERT",
+	"CRIT",
+	"ERR",
+	"WARNING",
+	"NOTICE",
+	"INFO",
+	"DEBUG" /* 7 */};
 
 /*** notify ***/
 int notify(const char * identifier, const char * message, uint8_t priority,

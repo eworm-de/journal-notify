@@ -61,16 +61,26 @@ Be warned: This can flood your disktop with notifications.
 * *-r REGEX*: This add a regular expression match for the message field.
 * *-t SECONDS*: seconds to show the notification, 0 is forever
 * *-v*: verbose output, can be specified multiple times
+* *-x EXECUTABLE*: execute EXECUTABLE
+* *-X EXECUTABLE*: execute EXECUTABLE, do not show notification
 
 The screenshot shown above resulted from this command:
 
 > journal-notify -m SYSLOG_IDENTIFIER=sshd -e -r "^(error:|Accepted)"
 -i security-high
 
+The command specified by `-x` is called with three options. Make sure
+your executable understands these options:
+
+* *-i*: syslog identifier
+* *-p*: priority
+* *-m*: message
+
 Additionally example desktop files are installed to
 `/usr/share/journal-notify/examples`. You should copy them to
 `~/.config/autostart/` to enable autostart or create your own desktop files
-there.
+there. Example execute scripts are installed to
+`/usr/share/journal-notify/execute/`.
 
 ### Upstream
 

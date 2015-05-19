@@ -9,7 +9,7 @@
 
 const char * program = NULL;
 
-const static char optstring[] = "aehi:m:nor:t:v";
+const static char optstring[] = "aehi:m:nor:t:vx:X:";
 const static struct option options_long[] = {
 	/* name			has_arg			flag	val */
 	{ "and",		no_argument,		NULL,	'a' },
@@ -22,6 +22,8 @@ const static struct option options_long[] = {
 	{ "regex",		required_argument,	NULL,	'r' },
 	{ "timeout",		required_argument,	NULL,	't' },
 	{ "verbose",		no_argument,		NULL,	'v' },
+	{ "execute",		required_argument,	NULL, 	'x' },
+	{ "execute-only",	required_argument,	NULL, 	'X' },
 	{ 0, 0, 0, 0 }
 };
 
@@ -102,8 +104,14 @@ int main(int argc, char **argv) {
 
 	char * identifier, * message;
 	uint8_t priority;
-	const char * icon = DEFAULTICON;
+	const char * priorityname,
+	      * icon = DEFAULTICON;
 	int timeout = -1;
+
+	uint8_t executeonly = 0;
+	char * execute = NULL;
+	pid_t child_pid, wpid;
+	int status;
 
 	program = argv[0];
 
@@ -210,13 +218,23 @@ int main(int argc, char **argv) {
 					printf("Notifications will be displayed for %d seconds.\n", timeout);
 
 				break;
+			case 'X':
+				executeonly = 1;
+			case 'x':
+				execute = optarg;
+				if (verbose > 1)
+					printf("Command used for execution: %s\n", execute);
+
+				break;
 		}
 	}
 
-	if (notify_init(program) == FALSE) {
-		fprintf(stderr, "Failed to initialize notify.\n");
-		rc = EXIT_FAILURE;
-		goto out30;
+	if (executeonly == 0) {
+		if (notify_init(program) == FALSE) {
+			fprintf(stderr, "Failed to initialize notify.\n");
+			rc = EXIT_FAILURE;
+			goto out30;
+		}
 	}
 
 	while (1) {
@@ -266,29 +284,69 @@ int main(int argc, char **argv) {
 			continue;
 		}
 		priority = atoi(data + 9);
+		priorityname = priorities[priority];
 
 		if (verbose > 2)
 			printf("Received message from journal: %s\n", message);
 
-		/* show notification */
 		if (have_regex == 0 || regexec(&regex, message, 0, NULL, 0) == 0) {
-			for (i = 0; i < 3; i++) {
-				if (verbose > 0)
-					printf("Showing notification: %s: %s\n", identifier, message);
+			/* show notification */
+			if (executeonly == 0) {
+				for (i = 0; i < 3; i++) {
+					if (verbose > 0)
+						printf("Showing notification: %s: %s\n", identifier, message);
 
-				if ((rc = notify(identifier, message, priority, icon, timeout)) == 0)
-					break;
+					if ((rc = notify(identifier, message, priority, icon, timeout)) == 0)
+						break;
 
-				fprintf(stderr, "Failed to show notification, reinitializing libnotify.\n");
-				notify_uninit();
-				usleep(500 * 1000);
-				if (notify_init(program) == FALSE) {
-					fprintf(stderr, "Failed to initialize notify.\n");
-					rc = EXIT_FAILURE;
+					fprintf(stderr, "Failed to show notification, reinitializing libnotify.\n");
+					notify_uninit();
+					usleep(500 * 1000);
+					if (notify_init(program) == FALSE) {
+						fprintf(stderr, "Failed to initialize notify.\n");
+						rc = EXIT_FAILURE;
+					}
+				}
+				if (rc != 0)
+					goto out40;
+			}
+
+			/* execute command */
+			if (execute) {
+				if (verbose > 1)
+					printf("Executing: %s -i %s -p %s -m %s\n",
+						execute, identifier, priorityname, message);
+
+				if ((child_pid = fork()) < 0) {
+					fprintf(stderr, "fork() failed\n");
+				} else if (child_pid == 0) { /* This is the child */
+					rc = execlp(execute, execute, "-i", identifier,
+						"-p", priorityname, "-m", message, NULL);
+					/* execlp() should replace the process, so anything failed */
+					fprintf(stderr, "Failed to execute '%s': %s\n", execute, strerror(-rc));
+					goto out10;
+				} else { /* This is the parent */
+					do {
+						if ((wpid = waitpid(child_pid, &status, WUNTRACED|WCONTINUED)) < 0) {
+							perror("waitpid");
+							goto out40;
+						}
+
+						if (WIFEXITED(status)) {
+							if (WEXITSTATUS(status) > 0 || verbose > 1)
+								printf("child exited, status %d\n", WEXITSTATUS(status));
+						} else if (WIFSIGNALED(status)) {
+							printf("child killed (signal %d)\n", WTERMSIG(status));
+						} else if (WIFSTOPPED(status)) {
+							printf("child stopped (signal %d)\n", WSTOPSIG(status));
+						} else if (WIFCONTINUED(status)) {
+							printf("child continued\n");
+						} else {
+							printf("Unexpected status (0x%x)\n", status);
+						}
+					} while (!WIFEXITED(status) && !WIFSIGNALED(status));
 				}
 			}
-			if (rc != 0)
-				goto out40;
 		}
 
 		free(identifier);
@@ -298,7 +356,8 @@ int main(int argc, char **argv) {
 	rc = EXIT_SUCCESS;
 
 out40:
-	notify_uninit();
+	if (executeonly == 0)
+		notify_uninit();
 
 out30:
 	if (have_regex > 0)
