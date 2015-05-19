@@ -68,6 +68,7 @@ int main(int argc, char **argv) {
 	int regex_flags = REG_NOSUB;
 
 	sd_journal * journal;
+	uint8_t old_entry = 1;
 	const void * data;
 	size_t length;
 
@@ -195,12 +196,21 @@ int main(int argc, char **argv) {
 			fprintf(stderr, "Failed to iterate to next entry: %s\n", strerror(-rc));
 			goto out40;
 		} else if (rc == 0) {
+			old_entry = 0;
 			if (verbose > 2)
 				printf("Waiting...\n");
 			if ((rc = sd_journal_wait(journal, (uint64_t) -1)) < 0) {
 				fprintf(stderr, "Failed to wait for changes: %s\n", strerror(-rc));
 				goto out40;
 			}
+			continue;
+		}
+
+		/* Looks like there is a but in libsystemd journal handling
+		 * that jumps to wrong entries. Just skip old entries until we
+		 * have a recent ones. */
+		if (old_entry > 0) {
+			fprintf(stderr, "This is an old entry, ignoring.\n");
 			continue;
 		}
 
