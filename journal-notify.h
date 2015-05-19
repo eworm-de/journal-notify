@@ -26,7 +26,7 @@
 #define DEFAULTICON	"dialog-information"
 
 /*** notify ***/
-int notify(const char * summary, const char * body, const char * icon,
+int notify(const char * identifier, const char * message, const char * icon,
 		int timeout, uint8_t urgency);
 
 /*** main ***/

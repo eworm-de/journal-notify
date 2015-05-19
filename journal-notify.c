@@ -26,16 +26,16 @@ const static struct option options_long[] = {
 };
 
 /*** notify ***/
-int notify(const char * summary, const char * body, const char * icon,
+int notify(const char * identifier, const char * message, const char * icon,
 		int timeout, uint8_t urgency) {
 	NotifyNotification * notification;
 	int rc = -1;
 
 	notification =
 #if NOTIFY_CHECK_VERSION(0, 7, 0)
-		notify_notification_new(summary, body, icon);
+		notify_notification_new(identifier, message, icon);
 #else
-		notify_notification_new(summary, body, icon, NULL);
+		notify_notification_new(identifier, message, icon, NULL);
 #endif
 
 	if (notification == NULL)
@@ -72,7 +72,7 @@ int main(int argc, char **argv) {
 	const void * data;
 	size_t length;
 
-	char * summary, * message;
+	char * identifier, * message;
 	const char * icon = DEFAULTICON;
 	int timeout = -1;
 	uint8_t urgency;
@@ -226,7 +226,7 @@ int main(int argc, char **argv) {
 			fprintf(stderr, "Failed to read syslog identifier field: %s\n", strerror(-rc));
 			continue;
 		}
-		summary = g_markup_escape_text(data + 18, length - 18);
+		identifier = g_markup_escape_text(data + 18, length - 18);
 
 		/* get PRIORITY field */
 		if ((rc = sd_journal_get_data(journal, "PRIORITY", &data, &length)) < 0) {
@@ -255,9 +255,9 @@ int main(int argc, char **argv) {
 		if (have_regex == 0 || regexec(&regex, message, 0, NULL, 0) == 0) {
 			for (i = 0; i < 3; i++) {
 				if (verbose > 0)
-					printf("Showing notification: %s: %s\n", summary, message);
+					printf("Showing notification: %s: %s\n", identifier, message);
 
-				if ((rc = notify(summary, message, icon, timeout, urgency)) == 0)
+				if ((rc = notify(identifier, message, icon, timeout, urgency)) == 0)
 					break;
 
 				fprintf(stderr, "Failed to show notification, reinitializing libnotify.\n");
@@ -272,7 +272,7 @@ int main(int argc, char **argv) {
 				goto out40;
 		}
 
-		free(summary);
+		free(identifier);
 		free(message);
 	}
 
