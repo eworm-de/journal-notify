@@ -74,9 +74,9 @@ int main(int argc, char **argv) {
 
 	char * identifier, * message,
 		* identifier_markup, * message_markup;
+	uint8_t priority, urgency;
 	const char * icon = DEFAULTICON;
 	int timeout = -1;
-	uint8_t urgency;
 
 	program = argv[0];
 
@@ -240,7 +240,8 @@ int main(int argc, char **argv) {
 			fprintf(stderr, "Failed to read syslog identifier field: %s\n", strerror(-rc));
 			continue;
 		}
-		switch(atoi(data + 9)) {
+		priority = atoi(data + 9);
+		switch(priority) {
 			case 0:
 			case 1:
 			case 2:
