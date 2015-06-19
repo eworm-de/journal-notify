@@ -34,7 +34,7 @@ install-bin: journal-notify
 	$(INSTALL) -D -m0755 desktop/journal-notify-sshd.desktop $(DESTDIR)/usr/share/journal-notify/desktop/journal-notify-sshd.desktop
 	$(INSTALL) -D -m0755 execute/echo.sh $(DESTDIR)/usr/share/journal-notify/execute/echo.sh
 	$(INSTALL) -D -m0755 execute/mail.sh $(DESTDIR)/usr/share/journal-notify/execute/mail.sh
-	$(INSTALL) -D -m0755 systemd/journal-notify-sshd.service $(DESTDIR)/usr/share/journal-notify/systemd/journal-notify-sshd.service
+	$(INSTALL) -D -m0644 systemd/journal-notify-sshd.service $(DESTDIR)/usr/share/journal-notify/systemd/journal-notify-sshd.service
 
 install-doc: README.html
 	$(INSTALL) -D -m0644 README.md $(DESTDIR)/usr/share/doc/journal-notify/README.md
