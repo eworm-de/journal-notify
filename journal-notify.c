@@ -259,14 +259,20 @@ int main(int argc, char **argv) {
 		gettimeofday(&tv_now, NULL);
 
 		if (tv_now.tv_sec == tv_last.tv_sec) {
+			notification_count++;
 			if (notification_count >= 5) {
-				fprintf(stderr, "Already showed five notifications, ignoring!\n");
+				if (verbose)
+					fprintf(stderr, "Already showed %u notifications, throttling!\n", notification_count);
+				if (executeonly == 0 && notification_count == 5) {
+					if ((rc = notify(program, "Throttling notification! View your journal for complete log.", 0, "dialog-warning", timeout)) > 0) {
+						fprintf(stderr, "Failed to show notification.\n");
+					}
+				}
 				continue;
 			}
-			notification_count++;
 		} else {
 			tv_last = tv_now;
-			notification_count = 1;
+			notification_count = 0;
 		}
 
 		/* Looks like there is a bug in libsystemd journal handling
