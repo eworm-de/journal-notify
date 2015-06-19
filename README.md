@@ -77,10 +77,17 @@ your executable understands these options:
 * *-m*: message
 
 Additionally example desktop files are installed to
-`/usr/share/journal-notify/examples`. You should copy them to
+`/usr/share/journal-notify/desktop/`. You should copy them to
 `~/.config/autostart/` to enable autostart or create your own desktop files
-there. Example execute scripts are installed to
-`/usr/share/journal-notify/execute/`.
+there.
+
+Example execute scripts are installed to `/usr/share/journal-notify/execute/`.
+Review and update them before execution, for example you should replace the
+mail address in `mail.sh` with your own one.
+
+Example systemd units are installed to `/usr/share/journal-notify/systemd/`.
+To use them copy to `/etc/systemd/system/` and `systemctl enable`. Again, make
+sure to change unit file and script for your needs!
 
 ### Upstream
 

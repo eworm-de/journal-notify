@@ -1,0 +1,9 @@
+[Unit]
+Description=Notify about SSHD journal log entries
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/journal-notify -m SYSLOG_IDENTIFIER=sshd -e -r "^(error:|Accepted)" -X /path/to/updated/execute/mail.sh
+
+[Install]
+WantedBy=multi-user.target

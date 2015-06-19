@@ -19,6 +19,9 @@ while getopts "i:p:m:" opt; do
 	esac
 done
 
+# WARNING: Do NOT use this unmodified!
+# Please replace mail address with your own.
+
 mail -s "[${PRIORITY}] ${IDENTIFIER}" mail@example.com <<< "${MESSAGE}"
 
 exit 0

@@ -29,11 +29,12 @@ install: install-bin install-doc
 
 install-bin: journal-notify
 	$(INSTALL) -D -m0755 journal-notify $(DESTDIR)/usr/bin/journal-notify
-	$(INSTALL) -D -m0755 examples/journal-notify-crit-alert-emerg.desktop $(DESTDIR)/usr/share/journal-notify/examples/journal-notify-crit-alert-emerg.desktop
-	$(INSTALL) -D -m0755 examples/journal-notify-dhcpd.desktop $(DESTDIR)/usr/share/journal-notify/examples/journal-notify-dhcpd.desktop
-	$(INSTALL) -D -m0755 examples/journal-notify-sshd.desktop $(DESTDIR)/usr/share/journal-notify/examples/journal-notify-sshd.desktop
+	$(INSTALL) -D -m0755 desktop/journal-notify-crit-alert-emerg.desktop $(DESTDIR)/usr/share/journal-notify/desktop/journal-notify-crit-alert-emerg.desktop
+	$(INSTALL) -D -m0755 desktop/journal-notify-dhcpd.desktop $(DESTDIR)/usr/share/journal-notify/desktop/journal-notify-dhcpd.desktop
+	$(INSTALL) -D -m0755 desktop/journal-notify-sshd.desktop $(DESTDIR)/usr/share/journal-notify/desktop/journal-notify-sshd.desktop
 	$(INSTALL) -D -m0755 execute/echo.sh $(DESTDIR)/usr/share/journal-notify/execute/echo.sh
 	$(INSTALL) -D -m0755 execute/mail.sh $(DESTDIR)/usr/share/journal-notify/execute/mail.sh
+	$(INSTALL) -D -m0755 systemd/journal-notify-sshd.service $(DESTDIR)/usr/share/journal-notify/systemd/journal-notify-sshd.service
 
 install-doc: README.html
 	$(INSTALL) -D -m0644 README.md $(DESTDIR)/usr/share/doc/journal-notify/README.md
