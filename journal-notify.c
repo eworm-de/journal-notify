@@ -113,6 +113,9 @@ int main(int argc, char **argv) {
 	pid_t child_pid, wpid;
 	int status;
 
+	struct timeval tv_last = (struct timeval){ 0 }, tv_now = (struct timeval){ 0 };
+	unsigned int notification_count = 0;
+
 	program = argv[0];
 
 	/* get command line options - part I
@@ -159,7 +162,7 @@ int main(int argc, char **argv) {
 	/* reinitialize getopt() by resetting optind to 0 */
 	optind = 0;
 
-	/* get command line options - part II*/
+	/* get command line options - part II */
 	while ((i = getopt_long(argc, argv, optstring, options_long, NULL)) != -1) {
 		switch (i) {
 			case 'a':
@@ -237,6 +240,7 @@ int main(int argc, char **argv) {
 		}
 	}
 
+	/* main loop */
 	while (1) {
 		if ((rc = sd_journal_next(journal)) < 0) {
 			fprintf(stderr, "Failed to iterate to next entry: %s\n", strerror(-rc));
@@ -252,9 +256,22 @@ int main(int argc, char **argv) {
 			continue;
 		}
 
-		/* Looks like there is a but in libsystemd journal handling
+		gettimeofday(&tv_now, NULL);
+
+		if (tv_now.tv_sec == tv_last.tv_sec) {
+			if (notification_count >= 5) {
+				fprintf(stderr, "Already showed five notifications, ignoring!\n");
+				continue;
+			}
+			notification_count++;
+		} else {
+			tv_last = tv_now;
+			notification_count = 1;
+		}
+
+		/* Looks like there is a bug in libsystemd journal handling
 		 * that jumps to wrong entries. Just skip old entries until we
-		 * have a recent ones. */
+		 * have a recent one. */
 		if (old_entry > 0) {
 			fprintf(stderr, "This is an old entry, ignoring.\n");
 			continue;
