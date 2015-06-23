@@ -106,7 +106,7 @@ int main(int argc, char **argv) {
 	uint8_t priority;
 	const char * priorityname,
 	      * icon = DEFAULTICON;
-	int timeout = NOTIFY_EXPIRES_DEFAULT;
+	int timeout = NOTIFICATION_TIMEOUT;
 
 	uint8_t executeonly = 0;
 	char * execute = NULL;
