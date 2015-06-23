@@ -303,10 +303,10 @@ int main(int argc, char **argv) {
 		if (have_regex == 0 || regexec(&regex, message, 0, NULL, 0) == 0) {
 			/* throttling */
 			notification_count++;
-			if (notification_count >= 6) {
+			if (notification_count >= THROTTLE_THRESHOLD) {
 				if (verbose)
-					fprintf(stderr, "Already showed %u notifications, throttling!\n", notification_count - 1);
-				if (executeonly == 0 && notification_count == 6) {
+					fprintf(stderr, "This is the %uth notification, throttling!\n", notification_count);
+				if (executeonly == 0 && notification_count == THROTTLE_THRESHOLD) {
 					if ((rc = notify(program, "Throttling notification! View your journal for complete log.", 0, "dialog-warning", timeout)) > 0) {
 						fprintf(stderr, "Failed to show notification.\n");
 					}

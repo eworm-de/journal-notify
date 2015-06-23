@@ -23,6 +23,7 @@
 
 #include <libnotify/notify.h>
 
+#include "config.h"
 #include "version.h"
 
 #define DEFAULTICON	"dialog-information"

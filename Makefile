@@ -14,13 +14,16 @@ VERSION := 0.0.8
 
 all: journal-notify README.html
 
+journal-notify: journal-notify.c journal-notify.h config.h version.h
+	$(CC) $(CFLAGS) -o journal-notify journal-notify.c
+
+config.h:
+	$(CP) config.def.h config.h
+
 version.h: $(wildcard .git/HEAD .git/index .git/refs/tags/*) Makefile
 	echo "#ifndef VERSION" > $@
 	echo "#define VERSION \"$(shell git describe --tags --long 2>/dev/null || echo ${VERSION})\"" >> $@
 	echo "#endif" >> $@
-
-journal-notify: journal-notify.c journal-notify.h version.h
-	$(CC) $(CFLAGS) -o journal-notify journal-notify.c
 
 README.html: README.md
 	$(MD) README.md > README.html
@@ -42,7 +45,10 @@ install-doc: README.html
 	$(INSTALL) -D -m0644 screenshot.png $(DESTDIR)/usr/share/doc/journal-notify/screenshot.png
 
 clean:
-	rm -f *.o *~ README.html journal-notify
+	$(RM) -f *.o *~ README.html journal-notify version.h
+
+distclean:
+	$(RM) -f *.o *~ README.html journal-notify version.h config.h
 
 release:
 	git archive --format=tar.xz --prefix=journal-notify-$(VERSION)/ $(VERSION) > journal-notify-$(VERSION).tar.xz
