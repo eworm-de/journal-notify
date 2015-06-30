@@ -67,7 +67,7 @@ int notify(const char * identifier, const char * message, uint8_t priority,
 
 	/* NOTIFY_EXPIRES_NEVER == 0 */
 	if (timeout >= 0)
-		notify_notification_set_timeout(notification, timeout * 1000);
+		notify_notification_set_timeout(notification, timeout);
 
 	notify_notification_set_urgency(notification, urgency);
 
@@ -219,6 +219,7 @@ int main(int argc, char **argv) {
 				timeout = atoi(optarg);
 				if (verbose > 1)
 					printf("Notifications will be displayed for %d seconds.\n", timeout);
+				timeout *= 1000;
 
 				break;
 			case 'X':
