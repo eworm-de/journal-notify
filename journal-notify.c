@@ -9,7 +9,7 @@
 
 const char * program = NULL;
 
-const static char optstring[] = "aehi:m:nor:t:vx:X:";
+const static char optstring[] = "aehi:m:nor:t:vVx:X:";
 const static struct option options_long[] = {
 	/* name			has_arg			flag	val */
 	{ "and",		no_argument,		NULL,	'a' },
@@ -22,6 +22,7 @@ const static struct option options_long[] = {
 	{ "regex",		required_argument,	NULL,	'r' },
 	{ "timeout",		required_argument,	NULL,	't' },
 	{ "verbose",		no_argument,		NULL,	'v' },
+	{ "version",		no_argument,		NULL,	'V' },
 	{ "execute",		required_argument,	NULL, 	'x' },
 	{ "execute-only",	required_argument,	NULL, 	'X' },
 	{ 0, 0, 0, 0 }
@@ -116,6 +117,8 @@ int main(int argc, char **argv) {
 	struct timeval tv_last = (struct timeval){ 0 }, tv_now = (struct timeval){ 0 };
 	unsigned int notification_count = 0;
 
+	unsigned int version = 0, help = 0;
+
 	program = argv[0];
 
 	/* get command line options - part I
@@ -126,20 +129,30 @@ int main(int argc, char **argv) {
 				regex_flags |= REG_EXTENDED;
 				break;
 			case 'h':
-				fprintf(stderr, "usage: %s [-e] [-h] [-i ICON] [-m MATCH] [-o -m MATCH] [-a -m MATCH] [-n] [-r REGEX] [-t SECONDS] [-vv]\n", program);
-				return EXIT_SUCCESS;
+				help++;
+				break;
 			case 'n':
 				regex_flags |= REG_ICASE;
 				break;
 			case 'v':
 				verbose++;
 				break;
+			case 'V':
+				verbose++;
+				version++;
+				break;
 		}
 	}
 
 	/* say hello */
 	if (verbose > 0)
-		printf("%s v%s (compiled: " __DATE__ ", " __TIME__ ")\n", program, VERSION);
+		printf("%s: %s v%s (compiled: " __DATE__ ", " __TIME__ ")\n", program, PROGNAME, VERSION);
+
+	if (help > 0)
+		fprintf(stderr, "usage: %s [-e] [-h] [-i ICON] [-m MATCH] [-o -m MATCH] [-a -m MATCH] [-n] [-r REGEX] [-t SECONDS] [-v[v]] [-V] [-x EXECUTE] [-X EXECUTE]\n", program);
+
+	if (version > 0 || help > 0)
+		return EXIT_SUCCESS;
 
 	/* open journal */
 	if ((rc = sd_journal_open(&journal, SD_JOURNAL_LOCAL_ONLY + SD_JOURNAL_SYSTEM)) < 0) {

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "version.h"
 
+#define PROGNAME	"journal-notify"
+
 #define DEFAULTICON	"dialog-information"
 
 const char * priorities[] = {
