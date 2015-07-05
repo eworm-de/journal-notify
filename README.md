@@ -61,6 +61,7 @@ Be warned: This can flood your disktop with notifications.
 * *-r REGEX*: This add a regular expression match for the message field.
 * *-t SECONDS*: seconds to show the notification, 0 is forever
 * *-v*: verbose output, can be specified multiple times
+* *-V*: print version information
 * *-x EXECUTABLE*: execute EXECUTABLE
 * *-X EXECUTABLE*: execute EXECUTABLE, do not show notification
 
