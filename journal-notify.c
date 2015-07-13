@@ -9,7 +9,7 @@
 
 const char * program = NULL;
 
-const static char optstring[] = "aehi:m:nor:t:vVx:X:";
+const static char optstring[] = "aehi:m:nor:t:T:vVx:X:";
 const static struct option options_long[] = {
 	/* name			has_arg			flag	val */
 	{ "and",		no_argument,		NULL,	'a' },
@@ -21,6 +21,7 @@ const static struct option options_long[] = {
 	{ "or",			no_argument,		NULL,	'o' },
 	{ "regex",		required_argument,	NULL,	'r' },
 	{ "timeout",		required_argument,	NULL,	't' },
+	{ "throttle",		required_argument,	NULL,	'T' },
 	{ "verbose",		no_argument,		NULL,	'v' },
 	{ "version",		no_argument,		NULL,	'V' },
 	{ "execute",		required_argument,	NULL, 	'x' },
@@ -108,6 +109,7 @@ int main(int argc, char **argv) {
 	const char * priorityname,
 	      * icon = DEFAULTICON;
 	int timeout = NOTIFICATION_TIMEOUT;
+	int throttle = THROTTLE_THRESHOLD;
 
 	uint8_t executeonly = 0;
 	char * execute = NULL;
@@ -149,7 +151,7 @@ int main(int argc, char **argv) {
 		printf("%s: %s v%s (compiled: " __DATE__ ", " __TIME__ ")\n", program, PROGNAME, VERSION);
 
 	if (help > 0)
-		fprintf(stderr, "usage: %s [-e] [-h] [-i ICON] [-m MATCH] [-o -m MATCH] [-a -m MATCH] [-n] [-r REGEX] [-t SECONDS] [-v[v]] [-V] [-x EXECUTE] [-X EXECUTE]\n", program);
+		fprintf(stderr, "usage: %s [-e] [-h] [-i ICON] [-m MATCH] [-o -m MATCH] [-a -m MATCH] [-n] [-r REGEX] [-t SECONDS] [-T THROTTLE] [-v[v]] [-V] [-x EXECUTE] [-X EXECUTE]\n", program);
 
 	if (version > 0 || help > 0)
 		return EXIT_SUCCESS;
@@ -235,6 +237,13 @@ int main(int argc, char **argv) {
 				timeout *= 1000;
 
 				break;
+			case 'T':
+				throttle = atoi(optarg);
+				if (verbose > 1)
+					printf("Notifications will be throttled starting with the %dth.\n", throttle);
+				timeout *= 1000;
+
+				break;
 			case 'X':
 				executeonly = 1;
 			case 'x':
@@ -317,10 +326,10 @@ int main(int argc, char **argv) {
 		if (have_regex == 0 || regexec(&regex, message, 0, NULL, 0) == 0) {
 			/* throttling */
 			notification_count++;
-			if (notification_count >= THROTTLE_THRESHOLD) {
+			if (notification_count >= throttle) {
 				if (verbose)
 					fprintf(stderr, "This is the %uth notification, throttling!\n", notification_count);
-				if (executeonly == 0 && notification_count == THROTTLE_THRESHOLD) {
+				if (executeonly == 0 && notification_count == throttle) {
 					if ((rc = notify(program, "Throttling notification! View your journal for complete log.", 0, "dialog-warning", timeout)) > 0) {
 						fprintf(stderr, "Failed to show notification.\n");
 					}
