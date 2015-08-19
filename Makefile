@@ -42,7 +42,8 @@ install-bin: journal-notify
 install-doc: README.html
 	$(INSTALL) -D -m0644 README.md $(DESTDIR)/usr/share/doc/journal-notify/README.md
 	$(INSTALL) -D -m0644 README.html $(DESTDIR)/usr/share/doc/journal-notify/README.html
-	$(INSTALL) -D -m0644 screenshot.png $(DESTDIR)/usr/share/doc/journal-notify/screenshot.png
+	$(INSTALL) -D -m0644 screenshots/notification.png $(DESTDIR)/usr/share/doc/journal-notify/screenshots/notification.png
+	$(INSTALL) -D -m0644 screenshots/throttling.png $(DESTDIR)/usr/share/doc/journal-notify/screenshots/throttling.png
 
 clean:
 	$(RM) -f *.o *~ README.html journal-notify version.h

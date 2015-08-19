@@ -6,7 +6,11 @@ journal-notify
 This runs in background and produces notifications whenever systemd journal
 logs an entry. Notifications look like this:
 
-![Notification](screenshot.png)
+![Notification](screenshots/notification.png)
+
+Before flooding the desktop this will throttle notifications:
+
+![Throttling](screenshots/throttling.png)
 
 Requirements
 ------------
