@@ -59,9 +59,9 @@ int notify(const char * identifier, const char * message, uint8_t priority,
 
 	notification =
 #if NOTIFY_CHECK_VERSION(0, 7, 0)
-		notify_notification_new(identifier, message, icon);
+		notify_notification_new(identifier_markup, message_markup, icon);
 #else
-		notify_notification_new(identifier, message, icon, NULL);
+		notify_notification_new(identifier_markup, message_markup, icon, NULL);
 #endif
 
 	if (notification == NULL)
