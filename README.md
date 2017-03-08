@@ -98,4 +98,4 @@ sure to change unit file and script for your needs!
 ### Upstream
 
 URL: [GitHub.com](https://github.com/eworm-de/journal-notify)  
-Mirror: [eworm.de](http://git.eworm.de/cgit.cgi/journal-notify/)
+Mirror: [eworm.de](https://git.eworm.de/cgit.cgi/journal-notify/)
