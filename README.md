@@ -17,10 +17,9 @@ Requirements
 
 To compile and run `journal-notify` you need:
 
-* [libnotify](http://library.gnome.org/devel/notification-spec/)
-* [libsystemd](http://www.freedesktop.org/wiki/Software/systemd/)
-* [markdown](http://daringfireball.net/projects/markdown/) (HTML
- documentation)
+* [libnotify](https://developer.gnome.org/notification-spec/)
+* [libsystemd](https://www.github.com/systemd/systemd)
+* [markdown](https://daringfireball.net/projects/markdown/) (HTML documentation)
 * `gnome-icon-theme` (or whatever includes the icons you want to use)
 
 To use `journal-notify` you probably want `systemd-journald`.
