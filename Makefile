@@ -56,5 +56,5 @@ distclean:
 
 release:
 	git archive --format=tar.xz --prefix=journal-notify-$(VERSION)/ $(VERSION) > journal-notify-$(VERSION).tar.xz
-	gpg -ab journal-notify-$(VERSION).tar.xz
-	git notes --ref=refs/notes/signatures/tar add -C $$(git archive --format=tar --prefix=journal-notify-$(VERSION)/ $(VERSION) | gpg --armor --detach-sign | git hash-object -w --stdin) $(VERSION)
+	gpg --armor --detach-sign --comment journal-notify-$(VERSION).tar.xz journal-notify-$(VERSION).tar.xz
+	git notes --ref=refs/notes/signatures/tar add -C $$(git archive --format=tar --prefix=journal-notify-$(VERSION)/ $(VERSION) | gpg --armor --detach-sign --comment journal-notify-$(VERSION).tar | git hash-object -w --stdin) $(VERSION)
