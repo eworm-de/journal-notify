@@ -1,5 +1,10 @@
 [Unit]
 Description=Notify about SSHD journal log entries
+Requires=dbus.socket
+PartOf=graphical-session.target
+# Order after notification daemons to make sure it is stopped before.
+After=dunst.service xfce4-notifyd.service
+ConditionUser=!@system
 
 [Service]
 Type=simple
