@@ -20,7 +20,7 @@ VERSION := 0.1.1
 all: journal-notify README.html
 
 journal-notify: journal-notify.c journal-notify.h config.h version.h
-	$(CC) $(CFLAGS) $(LDFLAGS) -o journal-notify journal-notify.c
+	$(CC) journal-notify.c $(CFLAGS) $(LDFLAGS) -o journal-notify
 
 config.h:
 	$(CP) config.def.h config.h
