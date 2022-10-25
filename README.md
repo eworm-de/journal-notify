@@ -45,7 +45,7 @@ Usage
 -----
 
 To use `journal-notify` you need access to the journal log files. Make sure
-you get the expexted log entries by running `journalctl`. Possibly you have
+you get the expected log entries by running `journalctl`. Possibly you have
 to add yourself to group `systemd-journal` or similar.
 
 Just running `journal-notify` without parameter will show *all* log entries.
