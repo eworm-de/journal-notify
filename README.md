@@ -3,7 +3,7 @@ journal-notify
 
 **Notify about journal log entries**
 
-This runs in background and produces notifications whenever systemd journal
+This runs in the background and produces notifications whenever systemd journal
 logs an entry. Notifications look like this:
 
 ![Notification](screenshots/notification.png)
