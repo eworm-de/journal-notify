@@ -112,6 +112,13 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 URL:
 [GitHub.com](https://github.com/eworm-de/journal-notify#journal-notify)
 
-Mirror:
-[eworm.de](https://git.eworm.de/cgit.cgi/journal-notify/)
-[GitLab.com](https://gitlab.com/eworm-de/journal-notify#journal-notify)
+Mirrors:
+* [eworm.de](https://git.eworm.de/cgit.cgi/journal-notify/)
+* [GitLab.com](https://gitlab.com/eworm-de/journal-notify#journal-notify)
+
+### Packages
+
+* [AUR](https://aur.archlinux.org/packages/journal-notify)
+* [Copr](https://copr.fedorainfracloud.org/coprs/mettacrawler/journal-notify/)
+* PPA -TBD
+
