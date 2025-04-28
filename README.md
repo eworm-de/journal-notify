@@ -115,3 +115,6 @@ URL:
 Mirror:
 [eworm.de](https://git.eworm.de/cgit.cgi/journal-notify/)
 [GitLab.com](https://gitlab.com/eworm-de/journal-notify#journal-notify)
+
+---
+[⬆️ Go back to top](#top)
