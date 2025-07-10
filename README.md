@@ -1,6 +1,10 @@
 journal-notify
 ==============
 
+[![GitHub stars](https://img.shields.io/github/stars/eworm-de/journal-notify?logo=GitHub&style=flat&color=red)](https://github.com/eworm-de/journal-notify/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/eworm-de/journal-notify?logo=GitHub&style=flat&color=green)](https://github.com/eworm-de/journal-notify/network)
+[![GitHub watchers](https://img.shields.io/github/watchers/eworm-de/journal-notify?logo=GitHub&style=flat&color=blue)](https://github.com/eworm-de/journal-notify/watchers)
+
 **Notify about journal log entries**
 
 This runs in the background and produces notifications whenever systemd
