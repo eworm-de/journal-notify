@@ -16,14 +16,18 @@ Before flooding the desktop this will throttle notifications:
 
 ![Throttling](screenshots/throttling.png)
 
+*Use at your own risk*, pay attention to
+[license and warranty](#license-and-warranty), and
+[disclaimer on external links](#disclaimer-on-external-links)!
+
 Requirements
 ------------
 
 To compile and run `journal-notify` you need:
 
-* [libnotify](https://developer.gnome.org/notification-spec/)
-* [libsystemd](https://www.github.com/systemd/systemd)
-* [markdown](https://daringfireball.net/projects/markdown/) (HTML documentation)
+* [libnotify ↗️](https://developer.gnome.org/notification-spec/)
+* [libsystemd ↗️](https://www.github.com/systemd/systemd)
+* [markdown ↗️](https://daringfireball.net/projects/markdown/) (HTML documentation)
 * `gnome-icon-theme` (or whatever includes the icons you want to use)
 
 To use `journal-notify` you probably want `systemd-journald`.
@@ -110,6 +114,21 @@ This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 [GNU General Public License](COPYING.md) for more details.
+
+Disclaimer on external links
+----------------------------
+
+Our website contains links to the websites of third parties ("external
+links"). As the content of these websites is not under our control, we
+cannot assume any liability for such external content. In all cases, the
+provider of information of the linked websites is liable for the content
+and accuracy of the information provided. At the point in time when the
+links were placed, no infringements of the law were recognisable to us.
+As soon as an infringement of the law becomes known to us, we will
+immediately remove the link in question.
+
+> 💡️ **Hint**: All external links are marked with an arrow pointing
+> diagonally in an up-right (or north-east) direction (↗️).
 
 ### Upstream
 
