@@ -40,11 +40,11 @@ Build and install
 
 Building and installing is very easy. Just run:
 
-> make
+    make
 
 followed by:
 
-> make install
+    make install
 
 This will place an executable at `/usr/bin/journal-notify`,
 documentation can be found in `/usr/share/doc/journal-notify/`.
@@ -79,8 +79,7 @@ Be warned: This can flood your disktop with notifications.
 
 The screenshot shown above resulted from this command:
 
-> journal-notify -m SYSLOG_IDENTIFIER=sshd -e -r "^(error:|Accepted)"
--i security-high
+    journal-notify -m SYSLOG_IDENTIFIER=sshd -e -r "^(error:|Accepted)" -i security-high
 
 The command specified by `-x` is called with three options. Make sure
 your executable understands these options:
