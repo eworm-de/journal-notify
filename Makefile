@@ -15,7 +15,8 @@ LDFLAGS	+= -Wl,-z,now -Wl,-z,relro -pie
 
 # this is just a fallback in case you do not use git but downloaded
 # a release tarball...
-VERSION := 0.1.2
+DISTVER := 0.1.2
+VERSION ?= $(shell git describe --long 2>/dev/null || echo $(DISTVER))
 
 all: journal-notify README.html
 
@@ -55,6 +56,6 @@ distclean:
 	$(RM) -f *.o *~ README.html journal-notify version.h config.h
 
 release:
-	git archive --format=tar.xz --prefix=journal-notify-$(VERSION)/ $(VERSION) > journal-notify-$(VERSION).tar.xz
-	gpg --armor --detach-sign --comment journal-notify-$(VERSION).tar.xz journal-notify-$(VERSION).tar.xz
-	git notes --ref=refs/notes/signatures/tar add -C $$(git archive --format=tar --prefix=journal-notify-$(VERSION)/ $(VERSION) | gpg --armor --detach-sign --comment journal-notify-$(VERSION).tar | git hash-object -w --stdin) $(VERSION)
+	git archive --format=tar.xz --prefix=journal-notify-$(DISTVER)/ $(DISTVER) > journal-notify-$(DISTVER).tar.xz
+	gpg --armor --detach-sign --comment journal-notify-$(DISTVER).tar.xz journal-notify-$(DISTVER).tar.xz
+	git notes --ref=refs/notes/signatures/tar add -C $$(git archive --format=tar --prefix=journal-notify-$(DISTVER)/ $(DISTVER) | gpg --armor --detach-sign --comment journal-notify-$(DISTVER).tar | git hash-object -w --stdin) $(DISTVER)
