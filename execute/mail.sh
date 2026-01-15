@@ -27,5 +27,3 @@ done
 mail -s "[${PRIORITY}] ${IDENTIFIER}" mail@example.com <<< "${MESSAGE}"
 
 exit 0
-
-# vim: set syntax=sh:

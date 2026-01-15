@@ -59,6 +59,3 @@ int notify(const char * identifier, const char * message, uint8_t priority,
 int main(int argc, char **argv);
 
 #endif /* _JOURNAL_NOTIFY_H */
-
-// vim: set syntax=c:
-

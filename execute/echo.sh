@@ -26,5 +26,3 @@ echo "PRIORITY:   ${PRIORITY}"
 echo "MESSAGE:    ${MESSAGE}"
 
 exit 0
-
-# vim: set syntax=sh:

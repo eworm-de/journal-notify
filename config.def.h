@@ -26,5 +26,3 @@
 #define THROTTLE_THRESHOLD	6
 
 #endif /* _CONFIG_H */
-
-// vim: set syntax=c:
